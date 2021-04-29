@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "../axios";
+// import axios from "axios";
 import "./Row.css";
 import YouTube from "react-youtube";
 import movieTrailer from "movie-trailer";
+import { API_KEY } from "../requests";
 
 const base_Url = "https://image.tmdb.org/t/p/original/";
 const Row = ({ title, fetchUrl, isLargeRow }) => {
@@ -27,17 +29,21 @@ const Row = ({ title, fetchUrl, isLargeRow }) => {
     },
   };
 
-  const handleClick = (movie) => {
+  const handleClick = async (movie) => {
     if (trailerUrl) {
       setTrailerUrl("");
     } else {
-      movieTrailer(movie.name || "")
-        .then((url) => {
-          //https://www.youtube.com/watch?v=XtMThy8QKqU
-          const urlParams = new URLSearchParams(new URL(url).search);
-          setTrailerUrl(urlParams.get("v"));
-        })
-        .catch((error) => console.log(error));
+      // movieTrailer(movie.name || "")
+      //   .then((url) => {
+      //     //https://www.youtube.com/watch?v=XtMThy8QKqU
+      //     const urlParams = new URLSearchParams(new URL(url).search);
+      //     setTrailerUrl(urlParams.get("v"));
+      //   })
+      //   .catch((error) => console.log(error));
+      let trailerurl = await axios.get(
+        `/movie/${movie.id}/videos?api_key=${API_KEY}`
+      );
+      setTrailerUrl(trailerurl.data.results[0]?.key);
     }
   };
 
